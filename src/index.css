@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .bg-corona-dark {
+    background-color: #000000;
+  }
+  .bg-corona-card {
+    background-color: #191c24;
+  }
+}
+
+@layer components {
+  /* Neon Input Styling */
+  .input-corona {
+    @apply bg-[#2A3038] border-none text-white placeholder-gray-500 focus:ring-1 focus:ring-corona-blue rounded-lg;
+  }
+  
+  .btn-kivo {
+    @apply bg-corona-blue text-white rounded-lg px-4 py-2 hover:bg-opacity-80 transition-all shadow-lg shadow-corona-blue/20 font-medium;
+  }
+}
