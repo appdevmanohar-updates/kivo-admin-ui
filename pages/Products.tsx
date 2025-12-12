@@ -64,9 +64,9 @@ export const Products: React.FC = () => {
                 </button>
              )}
 
-             <div className="flex flex-col sm:flex-row gap-3">
+             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                  {/* Fabric Filter */}
-                 <div className="relative group">
+                 <div className="relative group w-full sm:w-auto">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Filter size={16} className="text-gray-400 group-hover:text-corona-blue transition-colors" />
                     </div>
@@ -84,7 +84,7 @@ export const Products: React.FC = () => {
                  </div>
 
                  {/* Status Tabs */}
-                 <div className="bg-black border border-[#2A3038] rounded-lg p-1 flex space-x-1">
+                 <div className="bg-black border border-[#2A3038] rounded-lg p-1 flex space-x-1 overflow-x-auto w-full sm:w-auto">
                     {(['all', 'pending', 'in_stock', 'rejected'] as const).map((tab) => {
                       const labels: Record<string, string> = {
                         all: 'All',
@@ -97,7 +97,7 @@ export const Products: React.FC = () => {
                           key={tab}
                           onClick={() => setStatusFilter(tab)}
                           className={clsx(
-                              "px-3 py-1 text-sm font-medium rounded-md transition-all",
+                              "px-3 py-1 text-sm font-medium rounded-md transition-all whitespace-nowrap",
                               statusFilter === tab 
                                   ? "bg-corona-blue text-white shadow-md shadow-corona-blue/20" 
                                   : "text-gray-500 hover:bg-[#2A3038] hover:text-gray-300"
@@ -191,10 +191,10 @@ export const Products: React.FC = () => {
        <Modal isOpen={!!selectedProduct} onClose={() => setSelectedProduct(null)} title="Product Review">
          {selectedProduct && (
            <div className="flex flex-col md:flex-row h-full">
-             <div className="md:w-1/2 bg-[#0f1015] min-h-[400px]">
+             <div className="md:w-1/2 bg-[#0f1015] h-64 md:h-auto md:min-h-[400px] shrink-0">
                 <img src={selectedProduct.imageUrl} className="w-full h-full object-cover opacity-90" alt="Detail" />
              </div>
-             <div className="md:w-1/2 p-8 flex flex-col bg-corona-card">
+             <div className="md:w-1/2 p-6 md:p-8 flex flex-col bg-corona-card">
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
                     <div>
