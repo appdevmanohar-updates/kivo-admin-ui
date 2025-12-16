@@ -1,30 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataProvider } from './services/dataService';
+import { AuthProvider, useAuth } from './hooks/useAuth';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Products } from './pages/Products';
 import { Orders } from './pages/Orders';
 import { Sellers } from './pages/Sellers';
-
-// Simple Router implementation based on state, since react-router-dom wasn't strictly required
-// but the prompt mentions "Router" in context of structure.
-// I will use simple conditional rendering for spa-like feel without URL changes if not needed,
-// but let's sync with hash for reload persistence.
+import { Login } from './pages/Login';
 
 const AppContent: React.FC = () => {
-  // Simple hash router logic
-  const getPageFromHash = () => window.location.hash.replace('#/', '') || 'dashboard';
+  const { isAuthenticated, loading } = useAuth();
+  
+  const getPageFromHash = () => window.location.hash.replace('#/', '').replace('#', '') || 'dashboard';
   const [currentPage, setCurrentPage] = useState(getPageFromHash());
 
-  React.useEffect(() => {
-    const handleHashChange = () => setCurrentPage(getPageFromHash());
+  useEffect(() => {
+    const handleHashChange = () => {
+      const page = getPageFromHash();
+      setCurrentPage(page);
+    };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  useEffect(() => {
+    if (!loading) {
+      if (!isAuthenticated && currentPage !== 'login') {
+        window.location.hash = '/login';
+      } else if (isAuthenticated && currentPage === 'login') {
+        window.location.hash = '/dashboard';
+      }
+    }
+  }, [isAuthenticated, currentPage, loading]);
+
   const navigate = (page: string) => {
     window.location.hash = `/${page}`;
   };
+
+  if (loading) {
+     return (
+       <div className="h-screen bg-black flex items-center justify-center">
+         <div className="animate-pulse flex flex-col items-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-corona-pink to-corona-blue mb-4"></div>
+            <div className="text-gray-500 text-sm tracking-widest uppercase">Loading Portal...</div>
+         </div>
+       </div>
+     );
+  }
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
 
   const renderPage = () => {
     switch (currentPage) {
@@ -37,17 +63,19 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <Layout currentPage={currentPage} onNavigate={navigate}>
-      {renderPage()}
-    </Layout>
+    <DataProvider>
+      <Layout currentPage={currentPage} onNavigate={navigate}>
+        {renderPage()}
+      </Layout>
+    </DataProvider>
   );
 };
 
 function App() {
   return (
-    <DataProvider>
+    <AuthProvider>
       <AppContent />
-    </DataProvider>
+    </AuthProvider>
   );
 }
 
