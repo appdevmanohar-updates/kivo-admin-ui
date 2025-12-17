@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useData } from '../services/dataService';
 import { Badge, Button, Modal } from '../components/UI';
@@ -14,15 +13,17 @@ export const Products: React.FC = () => {
   const [fabricFilter, setFabricFilter] = useState<string>('all');
 
   const uniqueFabrics = useMemo<string[]>(() => {
-    const fabrics = new Set(products.map(p => p.fabric));
+    const fabrics = new Set<string>(products.map(p => p.fabric));
     return Array.from(fabrics).sort();
   }, [products]);
 
-  const displayProducts = products.filter(p => {
-    const matchesStatus = statusFilter === 'all' ? true : p.status === statusFilter;
-    const matchesFabric = fabricFilter === 'all' ? true : p.fabric === fabricFilter;
-    return matchesStatus && matchesFabric;
-  });
+  const displayProducts = useMemo<Product[]>(() => {
+    return products.filter(p => {
+      const matchesStatus = statusFilter === 'all' ? true : p.status === statusFilter;
+      const matchesFabric = fabricFilter === 'all' ? true : p.fabric === fabricFilter;
+      return matchesStatus && matchesFabric;
+    });
+  }, [products, statusFilter, fabricFilter]);
 
   const getStatusCount = (status: ProductStatus) => {
     return products.filter(p => {
@@ -145,7 +146,7 @@ export const Products: React.FC = () => {
           </div>
        ) : (
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-           {displayProducts.map(product => (
+           {displayProducts.map((product: Product) => (
              <div key={product.id} className="group relative bg-corona-card rounded-xl border border-[#2A3038] overflow-hidden hover:border-gray-600 transition-all duration-300 flex flex-col h-full hover:shadow-xl hover:shadow-black/50">
                 <div className="absolute top-3 left-3 z-10">
                    <Badge status={product.status} />

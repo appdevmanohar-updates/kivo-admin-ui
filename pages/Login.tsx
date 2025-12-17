@@ -33,7 +33,6 @@ export const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background Decorative Elements */}
       <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-corona-blue/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-corona-pink/5 rounded-full blur-[120px] pointer-events-none"></div>
 
@@ -102,7 +101,6 @@ export const Login: React.FC = () => {
             </button>
           </form>
 
-          {/* Demo Hint */}
           <div className="mt-8 pt-6 border-t border-white/5 text-center">
              <p className="text-gray-500 text-[10px] mb-3 font-bold uppercase tracking-widest">Testing the portal?</p>
              <button 

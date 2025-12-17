@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { DataProvider } from './services/dataService';
 import { AuthProvider, useAuth } from './hooks/useAuth';
