@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Product, Order, Seller, ProductStatus, OrderStatus, SellerStatus } from '../types';
 import { supabase } from '../lib/supabase';
+import { samplePendingProducts, sampleOrders, sampleSellers } from '../constants';
 
 interface DataContextType {
   products: Product[];
@@ -16,12 +17,11 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [products, setProducts] = useState<Product[]>(samplePendingProducts);
+  const [orders, setOrders] = useState<Order[]>(sampleOrders);
+  const [sellers, setSellers] = useState<Seller[]>(sampleSellers);
   const [loading, setLoading] = useState(true);
 
-  // Fetch initial data
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -32,8 +32,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           supabase.from('sellers').select('*')
         ]);
 
-        if (productsRes.data) {
-          // Map DB columns (snake_case) to Frontend types (camelCase)
+        if (productsRes.data && productsRes.data.length > 0) {
           const mappedProducts: Product[] = productsRes.data.map((p: any) => ({
             id: p.id,
             title: p.title,
@@ -49,7 +48,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setProducts(mappedProducts);
         }
 
-        if (ordersRes.data) {
+        if (ordersRes.data && ordersRes.data.length > 0) {
           const mappedOrders: Order[] = ordersRes.data.map((o: any) => ({
             id: o.id,
             productName: o.product_name,
@@ -65,7 +64,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setOrders(mappedOrders);
         }
 
-        if (sellersRes.data) {
+        if (sellersRes.data && sellersRes.data.length > 0) {
           const mappedSellers: Seller[] = sellersRes.data.map((s: any) => ({
             id: s.id,
             name: s.name,
@@ -77,9 +76,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           }));
           setSellers(mappedSellers);
         }
-
       } catch (error) {
-        console.error('Error fetching data from Supabase:', error);
+        console.warn('Supabase fetch failed, using sample data:', error);
       } finally {
         setLoading(false);
       }
@@ -89,83 +87,43 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const updateProductStatus = async (id: string, status: ProductStatus) => {
-    // Optimistic Update
     setProducts(prev => prev.map(p => p.id === id ? { ...p, status } : p));
-    
     try {
-      const { error } = await supabase
-        .from('products')
-        .update({ status })
-        .eq('id', id);
-
-      if (error) throw error;
+      await supabase.from('products').update({ status }).eq('id', id);
     } catch (err) {
-      console.error('Failed to update product status:', err);
-      // Revert on failure could be implemented here
+      console.error('Failed to sync product status:', err);
     }
   };
 
   const bulkApproveProducts = async (ids: string[]) => {
-    // Optimistic Update
     setProducts(prev => prev.map(p => ids.includes(p.id) ? { ...p, status: 'in_stock' as ProductStatus } : p));
-
     try {
-      const { error } = await supabase
-        .from('products')
-        .update({ status: 'in_stock' })
-        .in('id', ids);
-
-      if (error) throw error;
+      await supabase.from('products').update({ status: 'in_stock' }).in('id', ids);
     } catch (err) {
-      console.error('Failed to bulk approve products:', err);
+      console.error('Failed to sync bulk approval:', err);
     }
   };
 
   const assignDelivery = async (orderId: string, riderName: string) => {
-    // Optimistic Update
     setOrders(prev => prev.map(o => 
-      o.id === orderId 
-        ? { ...o, status: 'out_for_delivery' as OrderStatus, riderName } 
-        : o
+      o.id === orderId ? { ...o, status: 'out_for_delivery' as OrderStatus, riderName } : o
     ));
-
     try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ 
-          rider_name: riderName, 
-          status: 'out_for_delivery' 
-        })
-        .eq('id', orderId);
-
-      if (error) throw error;
+      await supabase.from('orders').update({ rider_name: riderName, status: 'out_for_delivery' }).eq('id', orderId);
     } catch (err) {
-      console.error('Failed to assign delivery:', err);
+      console.error('Failed to sync delivery assignment:', err);
     }
   };
 
   const toggleSellerStatus = async (sellerId: string) => {
     const seller = sellers.find(s => s.id === sellerId);
     if (!seller) return;
-
     const newStatus: SellerStatus = seller.status === 'active' ? 'suspended' : 'active';
-
-    // Optimistic Update
-    setSellers(prev => prev.map(s => 
-      s.id === sellerId 
-        ? { ...s, status: newStatus } 
-        : s
-    ));
-
+    setSellers(prev => prev.map(s => s.id === sellerId ? { ...s, status: newStatus } : s));
     try {
-      const { error } = await supabase
-        .from('sellers')
-        .update({ status: newStatus })
-        .eq('id', sellerId);
-
-      if (error) throw error;
+      await supabase.from('sellers').update({ status: newStatus }).eq('id', sellerId);
     } catch (err) {
-      console.error('Failed to toggle seller status:', err);
+      console.error('Failed to sync seller status:', err);
     }
   };
 
@@ -187,8 +145,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useData = () => {
   const context = useContext(DataContext);
-  if (!context) {
-    throw new Error('useData must be used within a DataProvider');
-  }
+  if (!context) throw new Error('useData must be used within a DataProvider');
   return context;
 };

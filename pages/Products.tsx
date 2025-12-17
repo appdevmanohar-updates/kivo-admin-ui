@@ -171,7 +171,7 @@ export const Products: React.FC = () => {
                    </div>
                    
                    <div className="mt-3 mb-4 flex flex-wrap gap-1">
-                      {product.sizes.map(size => (
+                      {product.sizes.map((size: string) => (
                         <span key={size} className="text-[10px] px-1.5 py-0.5 border border-[#2A3038] rounded text-gray-400 bg-[#0f1015]">{size}</span>
                       ))}
                    </div>
@@ -242,7 +242,7 @@ export const Products: React.FC = () => {
                     <div>
                        <p className="text-sm font-medium text-white mb-2">Available Sizes</p>
                        <div className="flex flex-wrap gap-2">
-                          {selectedProduct.sizes.map(size => (
+                          {selectedProduct.sizes.map((size: string) => (
                              <div key={size} className="w-12 h-12 rounded-lg border border-[#2A3038] flex flex-col items-center justify-center bg-[#0f1015]">
                                 <span className="font-bold text-white text-sm">{size}</span>
                              </div>
