@@ -25,6 +25,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      
+      // Set a safety timeout to ensure loading state doesn't get stuck
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+
       try {
         const [productsRes, ordersRes, sellersRes] = await Promise.all([
           supabase.from('products').select('*'),
@@ -62,6 +68,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             imageUrl: o.image_url
           }));
           setOrders(mappedOrders);
+        } else {
+          // Explicitly keep sample data if remote data is empty
+          console.log('No remote orders found, keeping sample data.');
+          setOrders(sampleOrders);
         }
 
         if (sellersRes.data && sellersRes.data.length > 0) {
@@ -77,8 +87,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setSellers(mappedSellers);
         }
       } catch (error) {
-        console.warn('Supabase fetch failed, using sample data:', error);
+        console.warn('Supabase fetch failed or connection refused, using local data.', error);
       } finally {
+        clearTimeout(timeoutId);
         setLoading(false);
       }
     };

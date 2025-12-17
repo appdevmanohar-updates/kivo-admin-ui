@@ -19,12 +19,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Initial check
+    const checkSession = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+      } catch (e) {
+        console.warn('Supabase auth session check failed, check your network.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkSession();
 
     // Listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -37,9 +45,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = async (email: string, password: string) => {
-    // DEMO BYPASS: Allow login with specific credentials if Supabase is not configured
+    // DEMO BYPASS for local preview and testing
     if (email === 'admin@kivo.com' && password === 'password') {
-      const mockSession = { access_token: 'demo', user: { email: 'admin@kivo.com', id: 'demo-user' } } as any;
+      const mockSession = { 
+        access_token: 'demo_token', 
+        user: { email: 'admin@kivo.com', id: 'demo-id' } 
+      } as any;
       setSession(mockSession);
       setUser(mockSession.user);
       return { error: null };
@@ -53,8 +64,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = async () => {
-    // If it's a demo session, just clear state
-    if (session?.access_token === 'demo') {
+    if (session?.access_token === 'demo_token') {
       setSession(null);
       setUser(null);
       return;

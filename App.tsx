@@ -11,18 +11,22 @@ import { Login } from './pages/Login';
 const AppContent: React.FC = () => {
   const { isAuthenticated, loading } = useAuth();
   
-  const getPageFromHash = () => window.location.hash.replace('#/', '').replace('#', '') || 'dashboard';
+  const getPageFromHash = () => {
+    const hash = window.location.hash.replace('#/', '').replace('#', '');
+    return hash || 'dashboard';
+  };
+  
   const [currentPage, setCurrentPage] = useState(getPageFromHash());
 
   useEffect(() => {
     const handleHashChange = () => {
-      const page = getPageFromHash();
-      setCurrentPage(page);
+      setCurrentPage(getPageFromHash());
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // Strict route protection
   useEffect(() => {
     if (!loading) {
       if (!isAuthenticated && currentPage !== 'login') {
@@ -39,14 +43,22 @@ const AppContent: React.FC = () => {
 
   if (loading) {
      return (
-       <div className="h-screen bg-black flex items-center justify-center overflow-hidden">
-         <div className="flex flex-col items-center">
-            <div className="relative w-16 h-16 mb-6">
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-corona-pink to-corona-blue animate-pulse"></div>
-                <div className="absolute inset-0 flex items-center justify-center text-white font-black text-2xl">K</div>
-            </div>
-            <div className="text-gray-500 text-[10px] font-bold tracking-[0.3em] uppercase animate-pulse">Initializing Portal</div>
+       <div className="h-screen bg-black flex flex-col items-center justify-center">
+         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-corona-pink to-corona-blue animate-pulse mb-6 flex items-center justify-center shadow-2xl shadow-corona-pink/20">
+            <span className="text-white font-black text-2xl">K</span>
          </div>
+         <div className="flex flex-col items-center space-y-2">
+            <div className="text-gray-500 text-[10px] font-black tracking-[0.3em] uppercase">Authenticating Terminal</div>
+            <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
+                <div className="h-full bg-corona-blue w-1/3 animate-[loading_1.5s_infinite_ease-in-out]"></div>
+            </div>
+         </div>
+         <style>{`
+            @keyframes loading {
+                0% { transform: translateX(-100%); }
+                100% { transform: translateX(300%); }
+            }
+         `}</style>
        </div>
      );
   }
