@@ -12,7 +12,7 @@ export const Products: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<ProductStatus | 'all'>('pending');
   const [fabricFilter, setFabricFilter] = useState<string>('all');
 
-  const uniqueFabrics = useMemo(() => {
+  const uniqueFabrics = useMemo<string[]>(() => {
     const fabrics = new Set(products.map(p => p.fabric));
     return Array.from(fabrics).sort();
   }, [products]);
@@ -23,6 +23,7 @@ export const Products: React.FC = () => {
     return matchesStatus && matchesFabric;
   });
 
+  // Calculate counts for badges
   const getStatusCount = (status: ProductStatus) => {
     return products.filter(p => {
         const matchesFabric = fabricFilter === 'all' ? true : p.fabric === fabricFilter;
@@ -60,6 +61,7 @@ export const Products: React.FC = () => {
           </div>
           
           <div className="flex flex-col xl:flex-row gap-3 items-start xl:items-center">
+             {/* Bulk Action */}
              {pendingCount > 0 && statusFilter === 'pending' && (
                 <button 
                     onClick={handleApproveAll}
@@ -71,6 +73,7 @@ export const Products: React.FC = () => {
              )}
 
              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                 {/* Fabric Filter */}
                  <div className="relative group w-full sm:w-auto">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <Filter size={16} className="text-gray-400 group-hover:text-corona-blue transition-colors" />
@@ -88,6 +91,7 @@ export const Products: React.FC = () => {
                     </div>
                  </div>
 
+                 {/* Status Tabs */}
                  <div className="bg-black border border-[#2A3038] rounded-lg p-1 flex space-x-1 overflow-x-auto w-full sm:w-auto">
                     {(['all', 'pending', 'in_stock', 'rejected'] as const).map((tab) => {
                       const labels: Record<string, string> = {
@@ -112,6 +116,7 @@ export const Products: React.FC = () => {
                           )}
                         >
                           <span>{labels[tab]}</span>
+                          {/* Badge for Pending Count */}
                           {tab === 'pending' && count > 0 && (
                             <span className={clsx(
                               "ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[18px]",
@@ -146,17 +151,21 @@ export const Products: React.FC = () => {
          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
            {displayProducts.map(product => (
              <div key={product.id} className="group relative bg-corona-card rounded-xl border border-[#2A3038] overflow-hidden hover:border-gray-600 transition-all duration-300 flex flex-col h-full hover:shadow-xl hover:shadow-black/50">
+                {/* Status Badge */}
                 <div className="absolute top-3 left-3 z-10">
                    <Badge status={product.status} />
                 </div>
+                {/* Units Tag */}
                 <div className="absolute top-3 right-3 z-10 bg-black/80 backdrop-blur text-white text-xs font-bold px-2 py-1 rounded border border-gray-700">
                    {product.stock} Units
                 </div>
                 
+                {/* Image */}
                 <div className="aspect-[4/5] relative overflow-hidden bg-[#0f1015]">
                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors z-0"></div>
                    <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
                    
+                   {/* Hover Action */}
                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
                       <Button variant="primary" onClick={() => setSelectedProduct(product)} className="transform translate-y-4 group-hover:translate-y-0 transition-transform">
                         <Eye size={16} className="mr-2" /> Quick View
@@ -164,6 +173,7 @@ export const Products: React.FC = () => {
                    </div>
                 </div>
 
+                {/* Content */}
                 <div className="p-4 flex flex-col flex-1">
                    <h3 className="font-bold text-white truncate" title={product.title}>{product.title}</h3>
                    <div className="flex justify-between items-center mt-1">
@@ -200,6 +210,7 @@ export const Products: React.FC = () => {
          </div>
        )}
 
+       {/* Review Modal */}
        <Modal isOpen={!!selectedProduct} onClose={() => setSelectedProduct(null)} title="Product Review">
          {selectedProduct && (
            <div className="flex flex-col md:flex-row h-full">

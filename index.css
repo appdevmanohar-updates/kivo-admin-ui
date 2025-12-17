@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .bg-corona-dark {
+    background-color: #000000;
+  }
+  .bg-corona-card {
+    background-color: #191c24;
+  }
+}
+
+@layer components {
+  /* Neon Input Styling */
+  .input-corona {
+    @apply bg-[#2A3038] border-none text-white placeholder-gray-500 focus:ring-1 focus:ring-corona-blue rounded-lg;
+  }
+  
+  .btn-kivo {
+    @apply bg-corona-blue text-white rounded-lg px-4 py-2 hover:bg-opacity-80 transition-all shadow-lg shadow-corona-blue/20 font-medium;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A3038;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6c7293;
+}
