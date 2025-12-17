@@ -39,10 +39,13 @@ const AppContent: React.FC = () => {
 
   if (loading) {
      return (
-       <div className="h-screen bg-black flex items-center justify-center">
-         <div className="animate-pulse flex flex-col items-center">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-corona-pink to-corona-blue mb-4"></div>
-            <div className="text-gray-500 text-sm tracking-widest uppercase">Loading Portal...</div>
+       <div className="h-screen bg-black flex items-center justify-center overflow-hidden">
+         <div className="flex flex-col items-center">
+            <div className="relative w-16 h-16 mb-6">
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-corona-pink to-corona-blue animate-pulse"></div>
+                <div className="absolute inset-0 flex items-center justify-center text-white font-black text-2xl">K</div>
+            </div>
+            <div className="text-gray-500 text-[10px] font-bold tracking-[0.3em] uppercase animate-pulse">Initializing Portal</div>
          </div>
        </div>
      );

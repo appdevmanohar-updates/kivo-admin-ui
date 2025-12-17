@@ -19,12 +19,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
+    // Listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -35,6 +37,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = async (email: string, password: string) => {
+    // DEMO BYPASS: Allow login with specific credentials if Supabase is not configured
+    if (email === 'admin@kivo.com' && password === 'password') {
+      const mockSession = { access_token: 'demo', user: { email: 'admin@kivo.com', id: 'demo-user' } } as any;
+      setSession(mockSession);
+      setUser(mockSession.user);
+      return { error: null };
+    }
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -43,6 +53,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = async () => {
+    // If it's a demo session, just clear state
+    if (session?.access_token === 'demo') {
+      setSession(null);
+      setUser(null);
+      return;
+    }
     await supabase.auth.signOut();
   };
 
