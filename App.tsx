@@ -48,7 +48,7 @@ const AppContent: React.FC = () => {
             <span className="text-white font-black text-2xl">K</span>
          </div>
          <div className="flex flex-col items-center space-y-2">
-            <div className="text-gray-500 text-[10px] font-black tracking-[0.3em] uppercase">Authenticating Terminal</div>
+            <div className="text-gray-500 text-[10px] font-black tracking-[0.3em] uppercase animate-pulse">Initializing Portal</div>
             <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
                 <div className="h-full bg-corona-blue w-1/3 animate-[loading_1.5s_infinite_ease-in-out]"></div>
             </div>

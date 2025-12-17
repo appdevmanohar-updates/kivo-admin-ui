@@ -19,22 +19,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Initial check
-    const checkSession = async () => {
+    // Check initial session
+    const checkInitialAuth = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
       } catch (e) {
-        console.warn('Supabase auth session check failed, check your network.');
+        console.warn('Initial auth check failed, check Supabase config.');
       } finally {
         setLoading(false);
       }
     };
 
-    checkSession();
+    checkInitialAuth();
 
-    // Listen for changes
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -45,14 +45,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = async (email: string, password: string) => {
-    // DEMO BYPASS for local preview and testing
+    // DEMO BYPASS: admin@kivo.com / password
     if (email === 'admin@kivo.com' && password === 'password') {
-      const mockSession = { 
-        access_token: 'demo_token', 
-        user: { email: 'admin@kivo.com', id: 'demo-id' } 
+      const demoSession = { 
+        access_token: 'demo-token', 
+        user: { email: 'admin@kivo.com', id: 'demo-user' } 
       } as any;
-      setSession(mockSession);
-      setUser(mockSession.user);
+      setSession(demoSession);
+      setUser(demoSession.user);
       return { error: null };
     }
 
@@ -64,7 +64,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = async () => {
-    if (session?.access_token === 'demo_token') {
+    // Handle demo session logout
+    if (session?.access_token === 'demo-token') {
       setSession(null);
       setUser(null);
       return;
