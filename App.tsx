@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { DataProvider } from './services/dataService';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -26,7 +27,6 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Strict route protection
   useEffect(() => {
     if (!loading) {
       if (!isAuthenticated && currentPage !== 'login') {

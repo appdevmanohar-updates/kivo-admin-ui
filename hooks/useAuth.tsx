@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
@@ -19,7 +20,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check initial session
     const checkInitialAuth = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -34,7 +34,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     checkInitialAuth();
 
-    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -45,7 +44,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = async (email: string, password: string) => {
-    // DEMO BYPASS: admin@kivo.com / password
     if (email === 'admin@kivo.com' && password === 'password') {
       const demoSession = { 
         access_token: 'demo-token', 
@@ -64,7 +62,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = async () => {
-    // Handle demo session logout
     if (session?.access_token === 'demo-token') {
       setSession(null);
       setUser(null);
