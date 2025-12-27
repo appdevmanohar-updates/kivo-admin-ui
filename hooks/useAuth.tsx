@@ -43,6 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   const login = async (email: string, password: string) => {
+    // Admin Demo Bypass
     if (email === 'admin@kivo.com' && password === 'password') {
       const demoSession = { 
         access_token: 'demo-token', 

@@ -13,12 +13,12 @@ export const Products: React.FC = () => {
   const [fabricFilter, setFabricFilter] = useState<string>('all');
 
   const uniqueFabrics = useMemo<string[]>(() => {
-    const fabrics = new Set<string>(products.map(p => p.fabric));
+    const fabrics = new Set<string>(products.map((p: Product) => p.fabric));
     return Array.from(fabrics).sort();
   }, [products]);
 
   const displayProducts = useMemo<Product[]>(() => {
-    return products.filter(p => {
+    return products.filter((p: Product) => {
       const matchesStatus = statusFilter === 'all' ? true : p.status === statusFilter;
       const matchesFabric = fabricFilter === 'all' ? true : p.fabric === fabricFilter;
       return matchesStatus && matchesFabric;
@@ -26,7 +26,7 @@ export const Products: React.FC = () => {
   }, [products, statusFilter, fabricFilter]);
 
   const getStatusCount = (status: ProductStatus) => {
-    return products.filter(p => {
+    return products.filter((p: Product) => {
         const matchesFabric = fabricFilter === 'all' ? true : p.fabric === fabricFilter;
         return p.status === status && matchesFabric;
     }).length;
@@ -45,7 +45,7 @@ export const Products: React.FC = () => {
   };
 
   const handleApproveAll = () => {
-    const idsToApprove = displayProducts.filter(p => p.status === 'pending').map(p => p.id);
+    const idsToApprove = displayProducts.filter((p: Product) => p.status === 'pending').map((p: Product) => p.id);
     if (idsToApprove.length > 0) {
         if(window.confirm(`Are you sure you want to approve ${idsToApprove.length} products?`)) {
             bulkApproveProducts(idsToApprove);
