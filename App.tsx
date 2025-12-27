@@ -49,13 +49,16 @@ const AppContent: React.FC = () => {
          <div className="flex flex-col items-center space-y-2">
             <div className="text-gray-500 text-[10px] font-black tracking-[0.3em] uppercase animate-pulse">Initializing Portal</div>
             <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-corona-blue w-1/3 animate-[loading_1.5s_infinite_ease-in-out]"></div>
+                <div className="h-full bg-corona-blue w-1/3 animate-loading"></div>
             </div>
          </div>
          <style>{`
             @keyframes loading {
                 0% { transform: translateX(-100%); }
                 100% { transform: translateX(300%); }
+            }
+            .animate-loading {
+              animation: loading 1.5s infinite ease-in-out;
             }
          `}</style>
        </div>
