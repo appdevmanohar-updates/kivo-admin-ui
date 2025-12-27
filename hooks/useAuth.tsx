@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
       } catch (e) {
-        console.warn('Initial auth check failed, check Supabase config.');
+        console.warn('Initial auth check failed, using fallback state.');
       } finally {
         setLoading(false);
       }

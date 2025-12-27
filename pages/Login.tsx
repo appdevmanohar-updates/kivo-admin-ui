@@ -17,7 +17,7 @@ export const Login: React.FC = () => {
     try {
       const { error } = await login(email, password);
       if (error) {
-        setError(error.message || 'Verification failed. Please check credentials.');
+        setError(error.message || 'Access Denied. Please verify credentials.');
       }
     } catch (err) {
       setError('Connection refused. Please try again.');
@@ -48,14 +48,14 @@ export const Login: React.FC = () => {
         <div className="bg-[#191c24]/80 backdrop-blur-2xl border border-white/5 rounded-3xl p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-corona-red/10 border border-corona-red/20 text-corona-red px-4 py-3 rounded-xl flex items-center text-sm animate-pulse">
+              <div className="bg-corona-red/10 border border-corona-red/20 text-corona-red px-4 py-3 rounded-xl flex items-center text-sm">
                 <AlertCircle size={18} className="mr-3 flex-shrink-0" />
                 {error}
               </div>
             )}
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Email Terminal</label>
+              <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Terminal ID (Email)</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Mail size={18} className="text-gray-600 group-focus-within:text-corona-blue transition-colors" />
@@ -114,7 +114,7 @@ export const Login: React.FC = () => {
         
         <div className="mt-8 flex items-center justify-center space-x-3 text-gray-600 opacity-50">
            <ShieldCheck size={16} />
-           <span className="text-[10px] font-bold uppercase tracking-widest">Enterprise Grade Security</span>
+           <span className="text-[10px] font-bold uppercase tracking-widest">Authorized Access Only</span>
         </div>
       </div>
     </div>
